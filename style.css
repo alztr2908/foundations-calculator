@@ -29,12 +29,20 @@ body {
 
 .results {
   border: 1px solid black;
-  height: 100px;
+  /* height: 100px; */
   background-color: rgb(227, 222, 222);
   padding: 0.5em;
 }
 
-.results-content {
+.results-ques {
+  font-weight: 500;
+  font-size: 36px;
+  text-align: right;
+  position: relative;
+  top: 50%;
+}
+
+.results-ans {
   font-weight: 500;
   font-size: 36px;
   text-align: right;
