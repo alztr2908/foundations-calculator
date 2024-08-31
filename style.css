@@ -30,12 +30,12 @@ body {
 
 .results {
   border: 1px solid black;
-  /* height: 100px; */
   background-color: rgb(227, 222, 222);
   padding: 0.5em;
 }
 
 .results-ques {
+  height: 40px;
   font-weight: 500;
   font-size: 36px;
   text-align: right;
@@ -44,6 +44,7 @@ body {
 }
 
 .results-ans {
+  height: 40px;
   font-weight: 500;
   font-size: 36px;
   text-align: right;
