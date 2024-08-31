@@ -1,10 +1,11 @@
 console.log("Hello World");
 const buttonGroup = document.querySelectorAll("button");
 const queryDisplay = document.querySelector(".results-ques");
-const ansDisplay = document.querySelector("results-ans");
+const ansDisplay = document.querySelector(".results-ans");
 let firstNum = "";
 let secondNum = "";
-let containOp = false;
+let origOp = "";
+let hasPoint = false;
 
 buttonGroup.forEach((button) => {
   button.addEventListener("click", (e) => {
@@ -34,52 +35,75 @@ buttonGroup.forEach((button) => {
 const formatEquation = (el) => {
   const op = ["+", "-", "*", "/"];
   const res = queryDisplay.textContent;
-  const lastElement = res.charAt(res.length - 1);
+  const lastElement = res.slice(res.length - 1);
 
-  // avoid op repition in display
-  if (!op.includes(lastElement)) {
-    queryDisplay.textContent += el;
-    firstNum = parseInt(secondNum);
-    console.log(firstNum);
+  // populating display for first time
+  if (!firstNum && !op.includes(lastElement)) {
+    firstNum = parseFloat(secondNum);
     secondNum = "";
-    containOp = true;
+    hasPoint = false;
+    origOp = el;
+    queryDisplay.textContent = `${ansDisplay.textContent} ${el} `;
+    return;
   }
 
-  if (containOp) {
-    secondNum = parseInt(secondNum);
-    calculate(firstNum, secondNum, el);
+  // calculate - firstNum included only
+  if (origOp) {
+    // if no secondNum, ans op but op will always just change
+    if (secondNum) {
+      let answer;
+      secondNum = parseFloat(secondNum);
+
+      if (el == "=") {
+        answer = calculate(firstNum, secondNum, origOp);
+        queryDisplay.textContent += `${secondNum.toString()} ${el}`;
+        ansDisplay.textContent = answer.toString();
+        firstNum = answer;
+        secondNum = "";
+        hasPoint = false;
+      }
+    } else {
+      if (el != "=") {
+        queryDisplay.textContent = `${ansDisplay.textContent} ${el} `;
+        origOp = el;
+      }
+    }
   }
-  // console.log(firstNum);
 };
 
 const formatNumber = (el) => {
-  const res = queryDisplay.textContent;
-  if (!res.includes(".")) {
-    queryDisplay.textContent += el;
-    secondNum += el;
+  const res = ansDisplay.textContent;
+  // no decimal repeated
+  if (el == ".") {
+    if (!hasPoint) {
+      el = ".";
+      hasPoint = true;
+    } else {
+      el = "";
+    }
+  }
+  secondNum += el;
+  ansDisplay.textContent = secondNum;
+};
+
+// Operations
+const calculate = (first, second, op) => {
+  switch (op) {
+    case "+":
+      return add(first, second);
+    case "-":
+      return subtract(first, second);
+    // case "*":
+    //   return multiply(first, second);
+    // case "/":
+    //   return divide(first, second);
   }
 };
 
-const calculate = (first, second, op) => {
-  console.log(first);
-  console.log(second);
-  let answer;
-  switch (op) {
-    case "+":
-      answer = first + second;
-      ansDisplay.textContent = answer.toString();
-      break;
-    case "-":
-      answer = first - second;
-      ansDisplay.textContent = answer.toString();
-      break;
-    case "*":
-      answer = first * second;
-      ansDisplay.textContent = answer.toString();
-      break;
-    case "/":
-      answer = first / second;
-      ansDisplay.textContent = answer.toString();
-      break;
-  }
+const add = (first, second) => {
+  return first + second;
+};
+
+const subtract = (first, second) => {
+  return first - second;
 };

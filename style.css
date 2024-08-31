@@ -36,15 +36,15 @@ body {
 
 .results-ques {
   height: 40px;
-  font-weight: 500;
-  font-size: 36px;
+  font-weight: 400;
+  font-size: 24px;
   text-align: right;
   position: relative;
   top: 50%;
 }
 
 .results-ans {
-  height: 40px;
+  height: 52px;
   font-weight: 500;
   font-size: 36px;
   text-align: right;
