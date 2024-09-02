@@ -59,6 +59,12 @@ const deleteNumber = () => {
 };
 
 const changeSign = () => {
+  if (secondNum == "" || secondNum == "0") {
+    secondNum = "0";
+    ansDisplay.textContent = secondNum;
+    return;
+  }
+
   if (secondNum[0] == "-") {
     secondNum = secondNum.substring(1, secondNum.length);
   } else {
