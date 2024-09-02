@@ -30,25 +30,19 @@ buttonGroup.forEach((button) => {
 - straight equal at seccond operator
 - firstNum op secondNum
 2. if this happens res will be formatted as (ans op)
-3. double decimal is not alloweds
+3. double decimal is not allowed
 */
 const formatEquation = (el) => {
-  const op = ["+", "-", "*", "/"];
-  const res = queryDisplay.textContent;
-  const lastElement = res.slice(res.length - 1);
-
   // populating display for first time
-  if (!firstNum && !op.includes(lastElement)) {
-    firstNum = parseFloat(secondNum);
+  if (!origOp) {
+    if (!firstNum) {
+      firstNum = parseFloat(secondNum);
+      hasPoint = false;
+    }
     secondNum = "";
-    hasPoint = false;
     origOp = el;
     queryDisplay.textContent = `${ansDisplay.textContent} ${el} `;
-    return;
-  }
-
-  // calculate - firstNum included only
-  if (origOp) {
+  } else {
     // if no secondNum, ans op but op will always just change
     if (secondNum) {
       let answer;
@@ -56,9 +50,9 @@ const formatEquation = (el) => {
 
       if (el == "=") {
         answer = calculate(firstNum, secondNum, origOp);
+        firstNum = answer;
         queryDisplay.textContent += `${secondNum.toString()} ${el}`;
         ansDisplay.textContent = answer.toString();
-        firstNum = answer;
         secondNum = "";
         hasPoint = false;
         origOp = "";
@@ -69,10 +63,6 @@ const formatEquation = (el) => {
         origOp = el;
       }
     }
-  } else {
-    firstNum = "";
-    hasPoint = false;
-    origOp = "";
   }
 };
 
@@ -93,6 +83,11 @@ const formatNumber = (el) => {
     } else {
       secondNum = "";
     }
+  }
+
+  // enter new number after operation - reset firstNum
+  if (!origOp) {
+    firstNum = "";
   }
 
   secondNum += el;
