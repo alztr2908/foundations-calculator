@@ -34,14 +34,14 @@ buttonGroup.forEach((button) => {
 */
 const formatEquation = (el) => {
   // populating display for first time
-  if (!origOp) {
-    if (!firstNum) {
+  if (!origOp && el != "=") {
+    if (firstNum == "") {
       firstNum = parseFloat(secondNum);
       hasPoint = false;
     }
     secondNum = "";
     origOp = el;
-    queryDisplay.textContent = `${ansDisplay.textContent} ${el} `;
+    queryDisplay.textContent = `${firstNum.toString()} ${el} `;
   } else {
     // if no secondNum, ans op but op will always just change
     if (secondNum) {
@@ -50,16 +50,23 @@ const formatEquation = (el) => {
 
       if (el == "=") {
         answer = calculate(firstNum, secondNum, origOp);
-        firstNum = answer;
-        queryDisplay.textContent += `${secondNum.toString()} ${el}`;
-        ansDisplay.textContent = answer.toString();
+
+        if (!isNaN(answer)) {
+          firstNum = answer;
+          ansDisplay.textContent = answer.toString();
+        } else {
+          firstNum = "0";
+          ansDisplay.textContent = "Can't divide by zero";
+        }
+
+        queryDisplay.textContent += `${secondNum.toString()} =`;
         secondNum = "";
         hasPoint = false;
         origOp = "";
       }
     } else {
       if (el != "=") {
-        queryDisplay.textContent = `${ansDisplay.textContent} ${el} `;
+        queryDisplay.textContent = `${firstNum.toString()} ${el} `;
         origOp = el;
       }
     }
@@ -101,17 +108,29 @@ const calculate = (first, second, op) => {
       return add(first, second);
     case "-":
       return subtract(first, second);
-    // case "*":
-    //   return multiply(first, second);
-    // case "/":
-    //   return divide(first, second);
+    case "*":
+      return multiply(first, second);
+    case "/":
+      return divide(first, second);
   }
 };
 
-const add = (first, second) => {
-  return first + second;
+const add = (a, b) => {
+  return a + b;
 };
 
-const subtract = (first, second) => {
-  return first - second;
+const subtract = (a, b) => {
+  return a - b;
+};
+
+const multiply = (a, b) => {
+  return a * b;
+};
+
+const divide = (a, b) => {
+  if (b == 0) {
+    return NaN;
+  }
+
+  return (a / b).toFixed(2);
 };
