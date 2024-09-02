@@ -3,7 +3,7 @@ const buttonGroup = document.querySelectorAll("button");
 const queryDisplay = document.querySelector(".results-ques");
 const ansDisplay = document.querySelector(".results-ans");
 let firstNum = "";
-let secondNum = "";
+let secondNum = ansDisplay.textContent;
 let origOp = "";
 let hasPoint = false;
 
@@ -61,6 +61,7 @@ const formatEquation = (el) => {
         firstNum = answer;
         secondNum = "";
         hasPoint = false;
+        origOp = "";
       }
     } else {
       if (el != "=") {
@@ -68,6 +69,10 @@ const formatEquation = (el) => {
         origOp = el;
       }
     }
+  } else {
+    firstNum = "";
+    hasPoint = false;
+    origOp = "";
   }
 };
 
@@ -82,6 +87,14 @@ const formatNumber = (el) => {
       el = "";
     }
   }
+  if (secondNum == "0") {
+    if (el == ".") {
+      secondNum = "0";
+    } else {
+      secondNum = "";
+    }
+  }
+
   secondNum += el;
   ansDisplay.textContent = secondNum;
 };
