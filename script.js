@@ -18,11 +18,86 @@ buttonGroup.forEach((button) => {
         formatEquation(clickedElement.textContent);
         break;
       case "utils-button":
-        console.log("utils");
+        formatUtilsButton(clickedElement.textContent);
         break;
     }
   });
 });
+
+const formatUtilsButton = (el) => {
+  switch (el) {
+    case "AC":
+      clearScreen();
+      break;
+    case "DEL":
+      deleteNumber();
+      break;
+    case "±":
+      changeSign();
+      break;
+    case "%":
+      getPercentage();
+      break;
+  }
+};
+
+const clearScreen = () => {
+  firstNum = "";
+  secondNum = "0";
+  hasPoint = false;
+  origOp = "";
+  queryDisplay.textContent = "";
+  ansDisplay.textContent = secondNum;
+};
+
+const deleteNumber = () => {
+  secondNum = secondNum.substring(0, secondNum.length - 1);
+  if (secondNum == "") {
+    secondNum = "0";
+  }
+  ansDisplay.textContent = secondNum;
+};
+
+const changeSign = () => {
+  if (secondNum[0] == "-") {
+    secondNum = secondNum.substring(1, secondNum.length);
+  } else {
+    secondNum = "-" + secondNum;
+  }
+  ansDisplay.textContent = secondNum;
+};
+
+const getPercentage = () => {
+  secondNum = divide(parseFloat(secondNum), 100);
+  ansDisplay.textContent = secondNum;
+};
+
+const formatNumber = (el) => {
+  if (secondNum == "") {
+    secondNum = "0";
+  }
+
+  // no decimal repeated
+  if (el == ".") {
+    if (!hasPoint) {
+      el = ".";
+      hasPoint = true;
+    } else {
+      el = "";
+    }
+  }
+  if (secondNum == "0" && el != ".") {
+    secondNum = "";
+  }
+
+  // enter new number after operation - reset firstNum
+  if (!origOp) {
+    firstNum = "";
+  }
+
+  secondNum += el;
+  ansDisplay.textContent = secondNum;
+};
 
 /* restrictions 
 1. (+ - / *) is not repeatable
@@ -71,34 +146,6 @@ const formatEquation = (el) => {
       }
     }
   }
-};
-
-const formatNumber = (el) => {
-  const res = ansDisplay.textContent;
-  // no decimal repeated
-  if (el == ".") {
-    if (!hasPoint) {
-      el = ".";
-      hasPoint = true;
-    } else {
-      el = "";
-    }
-  }
-  if (secondNum == "0") {
-    if (el == ".") {
-      secondNum = "0";
-    } else {
-      secondNum = "";
-    }
-  }
-
-  // enter new number after operation - reset firstNum
-  if (!origOp) {
-    firstNum = "";
-  }
-
-  secondNum += el;
-  ansDisplay.textContent = secondNum;
 };
 
 // Operations
