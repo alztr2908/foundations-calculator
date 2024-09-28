@@ -2,10 +2,9 @@ console.log("Hello World");
 const buttonGroup = document.querySelectorAll("button");
 const queryDisplay = document.querySelector(".results-ques");
 const ansDisplay = document.querySelector(".results-ans");
-let firstNum = "";
-let secondNum = ansDisplay.textContent;
-let origOp = "";
-let hasPoint = false;
+let savedOperand = "";
+let currentOperand = ansDisplay.textContent;
+let currentOperation = "";
 
 buttonGroup.forEach((button) => {
   button.addEventListener("click", (e) => {
@@ -42,113 +41,110 @@ const formatUtilsButton = (el) => {
 };
 
 const clearScreen = () => {
-  firstNum = "";
-  secondNum = "0";
-  hasPoint = false;
-  origOp = "";
+  savedOperand = "";
+  currentOperand = "0";
+  currentOperation = "";
   queryDisplay.textContent = "";
-  ansDisplay.textContent = secondNum;
+  ansDisplay.textContent = currentOperand;
 };
 
 const deleteNumber = () => {
-  secondNum = secondNum.substring(0, secondNum.length - 1);
-  if (secondNum == "") {
-    secondNum = "0";
+  currentOperand = currentOperand.substring(0, currentOperand.length - 1);
+  if (currentOperand == "") {
+    currentOperand = "0";
   }
-  ansDisplay.textContent = secondNum;
+  ansDisplay.textContent = currentOperand;
 };
 
 const changeSign = () => {
-  if (secondNum == "" || secondNum == "0") {
-    secondNum = "0";
-    ansDisplay.textContent = secondNum;
+  if (currentOperand == "" || currentOperand == "0") {
+    currentOperand = "0";
+    ansDisplay.textContent = currentOperand;
     return;
   }
 
-  if (secondNum[0] == "-") {
-    secondNum = secondNum.substring(1, secondNum.length);
+  if (currentOperand[0] == "-") {
+    currentOperand = currentOperand.substring(1, currentOperand.length);
   } else {
-    secondNum = "-" + secondNum;
+    currentOperand = "-" + currentOperand;
   }
-  ansDisplay.textContent = secondNum;
+  ansDisplay.textContent = currentOperand;
 };
 
 const getPercentage = () => {
-  secondNum = divide(parseFloat(secondNum), 100);
-  ansDisplay.textContent = secondNum;
+  currentOperand = divide(parseFloat(currentOperand), 100);
+  ansDisplay.textContent = currentOperand;
 };
 
 const formatNumber = (el) => {
-  if (secondNum == "") {
-    secondNum = "0";
+  if (currentOperand == "") {
+    currentOperand = "0";
   }
 
   // no decimal repeated
   if (el == ".") {
-    if (!hasPoint) {
-      el = ".";
-      hasPoint = true;
-    } else {
+    if (currentOperand.includes(".")) {
       el = "";
+    } else {
+      el = ".";
     }
   }
-  if (secondNum == "0" && el != ".") {
-    secondNum = "";
+  if (currentOperand == "0" && el != ".") {
+    currentOperand = "";
   }
 
-  // enter new number after operation - reset firstNum
-  if (!origOp) {
-    firstNum = "";
+  // reset equation by entering another number instead of
+  // continuing with another operation
+  if (!currentOperation) {
+    savedOperand = "";
   }
 
-  secondNum += el;
-  ansDisplay.textContent = secondNum;
+  currentOperand += el;
+  ansDisplay.textContent = currentOperand;
 };
 
 /* restrictions 
 1. (+ - / *) is not repeatable
 - can't equal without second operand
 - straight equal at seccond operator
-- firstNum op secondNum
+- savedOperand op currentOperand
 2. if this happens res will be formatted as (ans op)
 3. double decimal is not allowed
 */
 const formatEquation = (el) => {
   // populating display for first time
-  if (!origOp && el != "=") {
-    if (firstNum == "") {
-      firstNum = parseFloat(secondNum);
-      hasPoint = false;
+  if (!currentOperation && el != "=") {
+    if (savedOperand == "") {
+      savedOperand = parseFloat(currentOperand);
     }
-    secondNum = "";
-    origOp = el;
-    queryDisplay.textContent = `${firstNum.toString()} ${el} `;
+    currentOperand = "";
+    currentOperation = el;
+    queryDisplay.textContent = `${savedOperand.toString()} ${el} `;
   } else {
-    // if no secondNum, ans op but op will always just change
-    if (secondNum) {
+    // if no currentOperand, ans op but op will always just change
+    if (currentOperand) {
       let answer;
-      secondNum = parseFloat(secondNum);
+      currentOperand = parseFloat(currentOperand);
 
       if (el == "=") {
-        answer = calculate(firstNum, secondNum, origOp);
+        answer = calculate(savedOperand, currentOperand, currentOperation);
 
         if (!isNaN(answer)) {
-          firstNum = answer;
+          savedOperand = answer;
           ansDisplay.textContent = answer.toString();
         } else {
-          firstNum = "0";
+          savedOperand = "0";
           ansDisplay.textContent = "Can't divide by zero";
         }
 
-        queryDisplay.textContent += `${secondNum.toString()} =`;
-        secondNum = "";
-        hasPoint = false;
-        origOp = "";
+        queryDisplay.textContent += `${currentOperand.toString()} =`;
+        currentOperand = "";
+        currentOperation = "";
       }
     } else {
       if (el != "=") {
-        queryDisplay.textContent = `${firstNum.toString()} ${el} `;
-        origOp = el;
+        queryDisplay.textContent = `${savedOperand.toString()} ${el} `;
+        currentOperation = el;
       }
     }
   }
